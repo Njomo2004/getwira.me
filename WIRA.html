@@ -1,0 +1,811 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>WIRA</title>
+  <meta name="description" content="Verified fundis dispatched by AI. Plumbing, electrical, cleaning, carpentry and masonry — coming soon to Kiambu and Nairobi, Kenya.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ── TOKENS ──────────────────────────────────────────────────── */
+:root {
+  --green:        #1A4D3E;
+  --green-bright: #4CAF85;
+  --gold:         #D4A854;
+  --bg:           #F8F9FA;
+  --surface:      #FFFFFF;
+  --fg:           #1C1C1C;
+  --fg2:          #5F6368;
+  --border:       #E0E0DC;
+
+  --step-bg:    #1A4D3E;
+  --step-fg:    #FFFFFF;
+  --label-col:  #1A4D3E;
+  --ic-bg:      rgba(26, 77, 62, 0.08);
+  --ic-col:     #1A4D3E;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:      #0C0C0C;
+    --surface: #161616;
+    --fg:      #F0F0EE;
+    --fg2:     #9A9EA4;
+    --border:  #252525;
+
+    --step-bg:   rgba(76, 175, 133, 0.14);
+    --step-fg:   #4CAF85;
+    --label-col: #4CAF85;
+    --ic-bg:     rgba(76, 175, 133, 0.10);
+    --ic-col:    #4CAF85;
+
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:      #0C0C0C;
+  --surface: #161616;
+  --fg:      #F0F0EE;
+  --fg2:     #9A9EA4;
+  --border:  #252525;
+
+  --step-bg:   rgba(76, 175, 133, 0.14);
+  --step-fg:   #4CAF85;
+  --label-col: #4CAF85;
+  --ic-bg:     rgba(76, 175, 133, 0.10);
+  --ic-col:    #4CAF85;
+
+  color-scheme: dark;
+}
+
+/* ── RESET ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Safe-area status bar fill */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--green);
+  z-index: 101;
+  pointer-events: none;
+}
+
+img { max-width: 100%; display: block; }
+
+/* ── NAV ─────────────────────────────────────────────────────── */
+.nav {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 100;
+  background: var(--green);
+  padding-block: 13px;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.nav-mark { width: 36px; height: 36px; flex-shrink: 0; }
+
+.nav-wordmark {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.18em;
+  color: #FFFFFF;
+  text-transform: uppercase;
+}
+
+.nav-cta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--green);
+  background: #FFFFFF;
+  padding: 7px 14px;
+  border-radius: 999px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+.nav-cta:hover { opacity: 0.88; }
+
+/* ── HERO ────────────────────────────────────────────────────── */
+.hero {
+  background: var(--green);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-block: 80px 88px;
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+}
+
+/* Composite trade motif: circles (cleaning/plumbing) + right-angle (electrical) + brick (masonry) + curve (carpentry) */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.11;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Ccircle cx='0' cy='200' r='80' fill='none' stroke='white' stroke-width='0.9'/%3E%3Ccircle cx='0' cy='200' r='125' fill='none' stroke='white' stroke-width='0.9'/%3E%3Ccircle cx='200' cy='0' r='70' fill='none' stroke='white' stroke-width='0.9'/%3E%3Cpath d='M140 0 L140 60 L200 60' fill='none' stroke='white' stroke-width='0.9'/%3E%3Crect x='18' y='12' width='52' height='21' fill='none' stroke='white' stroke-width='0.6' rx='2'/%3E%3Crect x='82' y='12' width='52' height='21' fill='none' stroke='white' stroke-width='0.6' rx='2'/%3E%3Crect x='44' y='38' width='52' height='21' fill='none' stroke='white' stroke-width='0.6' rx='2'/%3E%3Cpath d='M0 155 Q50 142 100 158 Q150 174 200 158' fill='none' stroke='white' stroke-width='0.7'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  pointer-events: none;
+}
+
+.hero > * { position: relative; z-index: 1; }
+
+.hero-icon { width: 86px; height: 86px; margin-bottom: 14px; }
+
+.hero-wordmark {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 36px;
+  letter-spacing: 0.18em;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 5px 13px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+}
+
+.hero-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4CAF50;
+  flex-shrink: 0;
+}
+
+.hero-h1 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: clamp(38px, 10vw, 62px);
+  line-height: 1.07;
+  color: #FFFFFF;
+  text-wrap: balance;
+  max-width: 540px;
+  margin-bottom: 18px;
+}
+
+.hero-sub {
+  font-size: 17px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 450px;
+  text-wrap: balance;
+  margin-bottom: 40px;
+}
+
+/* Waitlist form */
+.hero-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 20px;
+}
+
+.hero-input {
+  height: 52px;
+  border: 1.5px solid rgba(255, 255, 255, 0.24);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.10);
+  color: #FFFFFF;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  padding: 0 16px;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  min-width: 0;
+}
+.hero-input::placeholder { color: rgba(255, 255, 255, 0.38); }
+.hero-input:focus {
+  border-color: rgba(255, 255, 255, 0.60);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.hero-btn {
+  height: 52px;
+  background: #FFFFFF;
+  color: var(--green);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+.hero-btn:hover { opacity: 0.90; }
+.hero-btn:active { opacity: 0.80; }
+
+/* Success state */
+.hero-success {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 400px;
+  margin-bottom: 20px;
+}
+
+.hero-success-check {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-success h3 {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: #FFFFFF;
+}
+
+.hero-success p {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.70);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.hero-caption {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.40);
+}
+
+/* ── SECTION SHARED ──────────────────────────────────────────── */
+.section {
+  padding-block: 72px;
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  background: var(--bg);
+}
+.section.alt {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.section-inner {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.s-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--label-col);
+  margin-bottom: 8px;
+}
+
+.s-heading {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: clamp(24px, 5vw, 36px);
+  line-height: 1.18;
+  color: var(--fg);
+  text-wrap: balance;
+  margin-bottom: 48px;
+}
+
+/* ── HOW IT WORKS ────────────────────────────────────────────── */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 36px;
+}
+
+.step { display: flex; flex-direction: column; gap: 14px; }
+
+.step-num {
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: var(--step-bg);
+  color: var(--step-fg);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-title {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.3;
+  color: var(--fg);
+}
+
+.step-body {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--fg2);
+}
+
+/* ── TRADES ──────────────────────────────────────────────────── */
+.trades-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.trade {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 18px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg);
+  white-space: nowrap;
+}
+
+.t-ic {
+  width: 18px;
+  height: 18px;
+  color: var(--label-col);
+  flex-shrink: 0;
+}
+
+/* ── TRUST ───────────────────────────────────────────────────── */
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.trust-card {
+  padding: 28px 22px;
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.t-ic-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  background: var(--ic-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.trust-title {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--fg);
+}
+
+.trust-body {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--fg2);
+}
+
+/* ── CTA BAND ────────────────────────────────────────────────── */
+.cta-band {
+  background: var(--green);
+  position: relative;
+  overflow: hidden;
+  padding-block: 72px 80px;
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  text-align: center;
+}
+
+.cta-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.09;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Ccircle cx='0' cy='200' r='80' fill='none' stroke='white' stroke-width='0.9'/%3E%3Ccircle cx='0' cy='200' r='125' fill='none' stroke='white' stroke-width='0.9'/%3E%3Ccircle cx='200' cy='0' r='70' fill='none' stroke='white' stroke-width='0.9'/%3E%3Cpath d='M140 0 L140 60 L200 60' fill='none' stroke='white' stroke-width='0.9'/%3E%3Crect x='18' y='12' width='52' height='21' fill='none' stroke='white' stroke-width='0.6' rx='2'/%3E%3Crect x='82' y='12' width='52' height='21' fill='none' stroke='white' stroke-width='0.6' rx='2'/%3E%3Crect x='44' y='38' width='52' height='21' fill='none' stroke='white' stroke-width='0.6' rx='2'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  pointer-events: none;
+}
+
+.cta-inner {
+  max-width: 580px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.cta-heading {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: clamp(26px, 5.5vw, 38px);
+  color: #FFFFFF;
+  text-wrap: balance;
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+
+.cta-sub {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.70);
+  margin-bottom: 36px;
+  line-height: 1.6;
+}
+
+.stores {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.store-btn {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 20px;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #FFFFFF;
+  text-decoration: none;
+  opacity: 0.42;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.store-label { font-size: 10px; color: rgba(255,255,255,0.65); letter-spacing: 0.03em; line-height: 1.3; }
+.store-name  { font-size: 15px; font-weight: 600; color: #FFFFFF; }
+
+.cta-note {
+  font-size: 11px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.38);
+}
+
+/* ── FOOTER ──────────────────────────────────────────────────── */
+.footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding-block: 28px;
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  padding-bottom: max(28px, calc(28px + env(safe-area-inset-bottom, 0px)));
+}
+
+.footer-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.footer-mark { width: 28px; height: 28px; }
+
+.footer-name {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.18em;
+  color: var(--fg);
+  text-transform: uppercase;
+}
+
+.footer-copy { font-size: 13px; color: var(--fg2); }
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media (min-width: 560px) {
+  .hero-form {
+    flex-direction: row;
+  }
+  .hero-input { flex: 1; }
+  .hero-btn   { padding: 0 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav">
+  <a href="#" class="nav-logo">
+    <!-- Reversed combo mark (frosted glass on green) -->
+    <svg class="nav-mark" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <rect width="200" height="200" rx="44" fill="rgba(255,255,255,0.14)"/>
+      <polyline points="50,55 74,138 100,80 126,138 150,55"
+        fill="none" stroke="white" stroke-width="20"
+        stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="80" y="152" width="40" height="5" rx="2.5" fill="#D4A854"/>
+    </svg>
+    <span class="nav-wordmark">WIRA</span>
+  </a>
+  <a href="#waitlist" class="nav-cta">Get early access</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero" id="top">
+  <!-- Reversed icon (frosted glass) -->
+  <svg class="hero-icon" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" rx="44" fill="rgba(255,255,255,0.13)"/>
+    <polyline points="50,55 74,138 100,80 126,138 150,55"
+      fill="none" stroke="white" stroke-width="20"
+      stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="80" y="152" width="40" height="5" rx="2.5" fill="#D4A854"/>
+  </svg>
+
+  <span class="hero-wordmark">WIRA</span>
+
+  <div class="hero-badge">Coming soon</div>
+
+  <h1 class="hero-h1">Get it fixed.<br>Today.</h1>
+
+  <p class="hero-sub">
+    Tell us what's broken. We dispatch a verified fundi automatically.
+    Pay only after the job is done — via M-Pesa.
+  </p>
+
+  <form class="hero-form" id="hero-form">
+    <input class="hero-input" type="email" id="hero-email"
+      placeholder="Your email address" required aria-label="Email address">
+    <button class="hero-btn" type="submit">Join the waitlist</button>
+  </form>
+
+  <div class="hero-success" id="hero-success">
+    <div class="hero-success-check">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+        stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    </div>
+    <h3>You're on the list.</h3>
+    <p>We'll notify you the moment WIRA launches in your area.</p>
+  </div>
+
+  <span class="hero-caption">Kenya · 2026</span>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="section" id="how">
+  <div class="section-inner">
+    <p class="s-label">How it works</p>
+    <h2 class="s-heading">From problem to fixed<br>in under 60 seconds.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <p class="step-title">Describe your problem</p>
+        <p class="step-body">Tell us what needs fixing. No technical knowledge needed.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <p class="step-title">We dispatch a verified fundi</p>
+        <p class="step-body">We find the nearest available fundi and send them your way.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <p class="step-title">Pay after the job is done</p>
+        <p class="step-body">Pay via M-Pesa only when the work is complete.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRUST ── -->
+<section class="section">
+  <div class="section-inner">
+    <p class="s-label">Why WIRA</p>
+    <h2 class="s-heading">Built on trust.<br>Verified every step.</h2>
+    <div class="trust-grid">
+
+      <div class="trust-card">
+        <div class="t-ic-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"
+            style="color: var(--ic-col)">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <polyline points="9 12 11 14 15 10"/>
+          </svg>
+        </div>
+        <p class="trust-title">Verified fundis only</p>
+        <p class="trust-body">Every fundi is ID-checked and trade-verified before their first job.</p>
+      </div>
+
+      <div class="trust-card">
+        <div class="t-ic-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"
+            style="color: var(--ic-col)">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <p class="trust-title">Fixed, transparent pricing</p>
+        <p class="trust-body">Affordable, fixed prices — no haggling. What you see is what you pay.</p>
+      </div>
+
+      <div class="trust-card">
+        <div class="t-ic-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"
+            style="color: var(--ic-col)">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <p class="trust-title">Pay on completion</p>
+        <p class="trust-body">Pay via M-Pesa only after the job is done. No upfront payment, no risk.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── DOWNLOAD / CTA BAND ── -->
+<section class="cta-band" id="waitlist">
+  <div class="cta-inner">
+    <h2 class="cta-heading">Be first when<br>we launch.</h2>
+    <p class="cta-sub">The app is built. We're onboarding our first fundis in Kiambu now. Join the list and we'll let you know the day we go live.</p>
+
+    <div class="stores">
+      <div class="store-btn" aria-label="Google Play — coming soon">
+        <!-- Play icon simplified -->
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+          <path d="M5 3l14 9-14 9V3z"/>
+        </svg>
+        <div>
+          <p class="store-label">Get it on</p>
+          <p class="store-name">Google Play</p>
+        </div>
+      </div>
+
+      <div class="store-btn" aria-label="App Store — coming soon">
+        <!-- Apple-like icon -->
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+        </svg>
+        <div>
+          <p class="store-label">Download on the</p>
+          <p class="store-name">App Store</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="cta-note">Coming soon · 2026</p>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <a href="#top" class="footer-brand">
+      <!-- Primary combo mark (green on light bg) -->
+      <svg class="footer-mark" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <rect width="200" height="200" rx="44" fill="#1A4D3E"/>
+        <polyline points="50,55 74,138 100,80 126,138 150,55"
+          fill="none" stroke="white" stroke-width="20"
+          stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="80" y="152" width="40" height="5" rx="2.5" fill="#D4A854"/>
+      </svg>
+      <span class="footer-name">WIRA</span>
+    </a>
+    <span class="footer-copy">© 2026 WIRA. Nairobi, Kenya.</span>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('hero-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const email = document.getElementById('hero-email').value.trim();
+    const btn = this.querySelector('button');
+    btn.disabled = true;
+    btn.textContent = 'Joining…';
+
+    try {
+      const res = await fetch('https://xqmqtvqlwfhjmftgfbwd.supabase.co/rest/v1/waitlist', {
+        method: 'POST',
+        headers: {
+          'apikey': 'sb_publishable_6MIYbDTrlNrrxuvusBqQew_kPiAIgj0',
+          'Authorization': 'Bearer sb_publishable_6MIYbDTrlNrrxuvusBqQew_kPiAIgj0',
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ email })
+      });
+
+      if (res.ok || res.status === 409) {
+        // 409 = duplicate email (already on list) — treat as success
+        this.style.display = 'none';
+        document.getElementById('hero-success').style.display = 'flex';
+      } else {
+        throw new Error('Server error');
+      }
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Join the waitlist';
+      alert('Something went wrong. Please try again.');
+    }
+  });
+</script>
+
+</body>
+</html>
+
+</body></html>
